@@ -105,12 +105,13 @@ export default function Home() {
 
         html { scroll-behavior: smooth; }
 
-        body {
-          font-family: 'DM Sans', sans-serif;
-          background: var(--paper);
-          color: var(--ink);
-          overflow-x: hidden;
-        }
+        .home-page {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
 
         /* ── NAV ── */
         .nav {

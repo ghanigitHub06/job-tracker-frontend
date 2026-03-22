@@ -7,10 +7,11 @@ import toast from "react-hot-toast";
 import { Plus, Search } from "lucide-react";
 
 const COLUMNS = [
-  { key: "APPLIED", label: "Applied", color: "#6366F1", bg: "#EEF2FF" },
-  { key: "INTERVIEW", label: "Interview", color: "#F97316", bg: "#FFF7ED" },
-  { key: "OFFER", label: "Offer", color: "#22C55E", bg: "#F0FDF4" },
-  { key: "REJECTED", label: "Rejected", color: "#F43F5E", bg: "#FFF1F2" },
+  { key: "WISHLIST", label: "Wishlist", color: "#7c3aed", bg: "#ede9fe" },
+  { key: "APPLIED", label: "Applied", color: "#1d4ed8", bg: "#dbeafe" },
+  { key: "INTERVIEW", label: "Interview", color: "#b45309", bg: "#fef3c7" },
+  { key: "OFFER", label: "Offer", color: "#065f46", bg: "#d1fae5" },
+  { key: "REJECTED", label: "Rejected", color: "#dc2626", bg: "#fee2e2" },
 ];
 
 const Dashboard = () => {
@@ -67,13 +68,11 @@ const Dashboard = () => {
     setEditJob(job);
     setModalOpen(true);
   };
-
   const openAdd = () => {
     setEditJob(null);
     setModalOpen(true);
   };
 
-  // Filter by search
   const filtered = jobs.filter(
     (j) =>
       j.company.toLowerCase().includes(search.toLowerCase()) ||
@@ -83,43 +82,36 @@ const Dashboard = () => {
   const getColumnJobs = (status) => filtered.filter((j) => j.status === status);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F8FAFC" }}>
+    <div className="app-layout">
       <Navbar />
 
-      <div style={{ padding: "24px", maxWidth: "1400px", margin: "0 auto" }}>
+      <main className="app-main">
         {/* Header */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            marginBottom: "24px",
+            marginBottom: "2rem",
             flexWrap: "wrap",
-            gap: "12px",
+            gap: "1rem",
           }}
         >
-          <div>
-            <h1
-              style={{
-                margin: "0 0 4px",
-                fontSize: "24px",
-                fontWeight: 800,
-                color: "#1E293B",
-              }}
-            >
-              My Applications
-            </h1>
-            <p style={{ margin: 0, color: "#64748B", fontSize: "14px" }}>
+          <div className="page-header" style={{ marginBottom: 0 }}>
+            <h1 className="page-title">My Applications</h1>
+            <p className="page-subtitle">
               {jobs.length} total application{jobs.length !== 1 ? "s" : ""}
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <div
+            style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}
+          >
             {/* Search */}
             <div style={{ position: "relative" }}>
               <Search
-                size={15}
-                color="#94A3B8"
+                size={14}
+                color="var(--muted)"
                 style={{
                   position: "absolute",
                   left: "10px",
@@ -128,39 +120,17 @@ const Dashboard = () => {
                 }}
               />
               <input
+                className="input"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search company or role..."
-                style={{
-                  padding: "9px 12px 9px 32px",
-                  borderRadius: "8px",
-                  border: "1px solid #E2E8F0",
-                  fontSize: "13px",
-                  width: "220px",
-                  background: "white",
-                  outline: "none",
-                }}
+                style={{ paddingLeft: "32px", width: "220px" }}
               />
             </div>
 
             {/* Add Button */}
-            <button
-              onClick={openAdd}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "10px 18px",
-                borderRadius: "10px",
-                border: "none",
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                color: "white",
-                fontSize: "14px",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              <Plus size={16} /> Add Application
+            <button className="btn btn-primary" onClick={openAdd}>
+              <Plus size={15} /> Add Application
             </button>
           </div>
         </div>
@@ -168,7 +138,12 @@ const Dashboard = () => {
         {/* Kanban Board */}
         {loading ? (
           <div
-            style={{ textAlign: "center", padding: "60px", color: "#94A3B8" }}
+            style={{
+              textAlign: "center",
+              padding: "60px",
+              color: "var(--muted)",
+              fontFamily: "'DM Sans', sans-serif",
+            }}
           >
             Loading your applications...
           </div>
@@ -176,26 +151,21 @@ const Dashboard = () => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: "16px",
+              gridTemplateColumns: "repeat(5, 1fr)",
+              gap: "1rem",
               alignItems: "start",
             }}
           >
             {COLUMNS.map((col) => (
               <div
                 key={col.key}
-                style={{
-                  background: "white",
-                  borderRadius: "14px",
-                  border: "1px solid #F1F5F9",
-                  overflow: "hidden",
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-                }}
+                className="card"
+                style={{ padding: 0, overflow: "hidden" }}
               >
                 {/* Column Header */}
                 <div
                   style={{
-                    padding: "14px 16px",
+                    padding: "12px 16px",
                     background: col.bg,
                     borderBottom: `2px solid ${col.color}`,
                     display: "flex",
@@ -204,22 +174,18 @@ const Dashboard = () => {
                   }}
                 >
                   <span
-                    style={{
-                      fontWeight: 700,
-                      color: col.color,
-                      fontSize: "13px",
-                      letterSpacing: "0.5px",
-                    }}
+                    className="kanban-col-header"
+                    style={{ color: col.color }}
                   >
-                    {col.label.toUpperCase()}
+                    {col.label}
                   </span>
                   <span
                     style={{
                       background: col.color,
                       color: "white",
                       borderRadius: "20px",
-                      padding: "2px 10px",
-                      fontSize: "12px",
+                      padding: "2px 8px",
+                      fontSize: "11px",
                       fontWeight: 700,
                     }}
                   >
@@ -238,15 +204,12 @@ const Dashboard = () => {
                   }}
                 >
                   {getColumnJobs(col.key).length === 0 ? (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        padding: "40px 16px",
-                        color: "#CBD5E1",
-                        fontSize: "13px",
-                      }}
-                    >
-                      No applications
+                    <div className="empty-state">
+                      <div className="empty-state-icon">📋</div>
+                      <div className="empty-state-title">Empty</div>
+                      <div className="empty-state-desc">
+                        No applications here yet
+                      </div>
                     </div>
                   ) : (
                     getColumnJobs(col.key).map((job) => (
@@ -263,7 +226,7 @@ const Dashboard = () => {
             ))}
           </div>
         )}
-      </div>
+      </main>
 
       <JobModal
         isOpen={modalOpen}

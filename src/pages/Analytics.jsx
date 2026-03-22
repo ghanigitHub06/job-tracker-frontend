@@ -13,7 +13,7 @@ import {
 import API from "../api/axios";
 import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
-import { TrendingUp, Briefcase, CheckCircle, XCircle } from "lucide-react";
+import { TrendingUp, Briefcase, CheckCircle, Award } from "lucide-react";
 
 ChartJS.register(
   ArcElement,
@@ -27,16 +27,8 @@ ChartJS.register(
 
 const StatCard = ({ icon, label, value, color, bg }) => (
   <div
-    style={{
-      background: "white",
-      borderRadius: "14px",
-      padding: "20px 24px",
-      boxShadow: "0 1px 4px rgba(0,0,0,0.07)",
-      border: "1px solid #F1F5F9",
-      display: "flex",
-      alignItems: "center",
-      gap: "16px",
-    }}
+    className="card"
+    style={{ display: "flex", alignItems: "center", gap: "1rem" }}
   >
     <div
       style={{
@@ -47,6 +39,7 @@ const StatCard = ({ icon, label, value, color, bg }) => (
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        flexShrink: 0,
       }}
     >
       {icon}
@@ -55,14 +48,24 @@ const StatCard = ({ icon, label, value, color, bg }) => (
       <p
         style={{
           margin: "0 0 2px",
-          fontSize: "13px",
-          color: "#64748B",
+          fontSize: "0.78rem",
+          color: "var(--muted)",
           fontWeight: 500,
+          fontFamily: "'DM Sans', sans-serif",
         }}
       >
         {label}
       </p>
-      <p style={{ margin: 0, fontSize: "26px", fontWeight: 800, color }}>
+      <p
+        style={{
+          margin: 0,
+          fontSize: "1.6rem",
+          fontWeight: 800,
+          color,
+          fontFamily: "'Syne', sans-serif",
+          lineHeight: 1,
+        }}
+      >
         {value}
       </p>
     </div>
@@ -82,11 +85,20 @@ const Analytics = () => {
 
   if (loading)
     return (
-      <div style={{ minHeight: "100vh", background: "#F8FAFC" }}>
+      <div className="app-layout">
         <Navbar />
-        <div style={{ textAlign: "center", padding: "80px", color: "#94A3B8" }}>
-          Loading analytics...
-        </div>
+        <main className="app-main">
+          <div
+            style={{
+              textAlign: "center",
+              padding: "80px",
+              color: "var(--muted)",
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            Loading analytics...
+          </div>
+        </main>
       </div>
     );
 
@@ -94,25 +106,30 @@ const Analytics = () => {
 
   const breakdown = data.statusBreakdown || {};
 
-  // Doughnut chart data
   const doughnutData = {
-    labels: ["Applied", "Interview", "Offer", "Rejected"],
+    labels: ["Wishlist", "Applied", "Interview", "Offer", "Rejected"],
     datasets: [
       {
         data: [
+          breakdown.WISHLIST || 0,
           breakdown.APPLIED || 0,
           breakdown.INTERVIEW || 0,
           breakdown.OFFER || 0,
           breakdown.REJECTED || 0,
         ],
-        backgroundColor: ["#6366F1", "#F97316", "#22C55E", "#F43F5E"],
+        backgroundColor: [
+          "#7c3aed",
+          "#1d4ed8",
+          "#b45309",
+          "#065f46",
+          "#dc2626",
+        ],
         borderWidth: 0,
         hoverOffset: 6,
       },
     ],
   };
 
-  // Bar chart data (weekly)
   const weekly = data.weeklyApplications || [];
   const barData = {
     labels: weekly.map((w) => `Week ${w.week}`),
@@ -120,7 +137,7 @@ const Analytics = () => {
       {
         label: "Applications",
         data: weekly.map((w) => w.count),
-        backgroundColor: "#818CF8",
+        backgroundColor: "#e85d2f",
         borderRadius: 6,
         borderSkipped: false,
       },
@@ -133,31 +150,36 @@ const Analytics = () => {
     scales: {
       y: {
         beginAtZero: true,
-        ticks: { stepSize: 1 },
-        grid: { color: "#F1F5F9" },
+        ticks: {
+          stepSize: 1,
+          font: { family: "'DM Sans', sans-serif", size: 11 },
+        },
+        grid: { color: "var(--cream)" },
       },
-      x: { grid: { display: false } },
+      x: {
+        grid: { display: false },
+        ticks: { font: { family: "'DM Sans', sans-serif", size: 11 } },
+      },
     },
   };
 
+  const STATUS_COLORS = [
+    { key: "WISHLIST", label: "Wishlist", color: "#7c3aed", bg: "#ede9fe" },
+    { key: "APPLIED", label: "Applied", color: "#1d4ed8", bg: "#dbeafe" },
+    { key: "INTERVIEW", label: "Interview", color: "#b45309", bg: "#fef3c7" },
+    { key: "OFFER", label: "Offer", color: "#065f46", bg: "#d1fae5" },
+    { key: "REJECTED", label: "Rejected", color: "#dc2626", bg: "#fee2e2" },
+  ];
+
   return (
-    <div style={{ minHeight: "100vh", background: "#F8FAFC" }}>
+    <div className="app-layout">
       <Navbar />
 
-      <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
+      <main className="app-main">
         {/* Header */}
-        <div style={{ marginBottom: "24px" }}>
-          <h1
-            style={{
-              margin: "0 0 4px",
-              fontSize: "24px",
-              fontWeight: 800,
-              color: "#1E293B",
-            }}
-          >
-            Analytics
-          </h1>
-          <p style={{ margin: 0, color: "#64748B", fontSize: "14px" }}>
+        <div className="page-header">
+          <h1 className="page-title">Analytics</h1>
+          <p className="page-subtitle">
             Your job search performance at a glance
           </p>
         </div>
@@ -166,65 +188,59 @@ const Analytics = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "16px",
-            marginBottom: "24px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "1rem",
+            marginBottom: "1.5rem",
           }}
         >
           <StatCard
-            icon={<Briefcase size={22} color="#6366F1" />}
+            icon={<Briefcase size={20} color="#e85d2f" />}
             label="Total Applications"
-            bg="#EEF2FF"
+            bg="#fde8e0"
             value={data.totalApplications}
-            color="#6366F1"
+            color="var(--accent)"
           />
           <StatCard
-            icon={<TrendingUp size={22} color="#F97316" />}
+            icon={<TrendingUp size={20} color="#b45309" />}
             label="Interviews"
-            bg="#FFF7ED"
+            bg="#fef3c7"
             value={breakdown.INTERVIEW || 0}
-            color="#F97316"
+            color="#b45309"
           />
           <StatCard
-            icon={<CheckCircle size={22} color="#22C55E" />}
+            icon={<CheckCircle size={20} color="#065f46" />}
             label="Offers"
-            bg="#F0FDF4"
+            bg="#d1fae5"
             value={breakdown.OFFER || 0}
-            color="#22C55E"
+            color="#065f46"
           />
           <StatCard
-            icon={<TrendingUp size={22} color="#8B5CF6" />}
+            icon={<Award size={20} color="#7c3aed" />}
             label="Success Rate"
-            bg="#F5F3FF"
+            bg="#ede9fe"
             value={`${data.successRate?.toFixed(1)}%`}
-            color="#8B5CF6"
+            color="#7c3aed"
           />
         </div>
 
-        {/* Charts Row */}
+        {/* Charts */}
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 2fr",
-            gap: "20px",
+            gap: "1.25rem",
+            marginBottom: "1.25rem",
           }}
         >
           {/* Doughnut */}
-          <div
-            style={{
-              background: "white",
-              borderRadius: "14px",
-              padding: "24px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.07)",
-              border: "1px solid #F1F5F9",
-            }}
-          >
+          <div className="card">
             <h2
               style={{
-                margin: "0 0 20px",
-                fontSize: "16px",
+                fontFamily: "'Syne', sans-serif",
+                fontSize: "1rem",
                 fontWeight: 700,
-                color: "#1E293B",
+                color: "var(--ink)",
+                marginBottom: "1.25rem",
               }}
             >
               Status breakdown
@@ -235,7 +251,10 @@ const Analytics = () => {
                 plugins: {
                   legend: {
                     position: "bottom",
-                    labels: { padding: 16, font: { size: 12 } },
+                    labels: {
+                      padding: 14,
+                      font: { family: "'DM Sans', sans-serif", size: 11 },
+                    },
                   },
                 },
                 cutout: "65%",
@@ -244,34 +263,25 @@ const Analytics = () => {
           </div>
 
           {/* Bar Chart */}
-          <div
-            style={{
-              background: "white",
-              borderRadius: "14px",
-              padding: "24px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.07)",
-              border: "1px solid #F1F5F9",
-            }}
-          >
+          <div className="card">
             <h2
               style={{
-                margin: "0 0 20px",
-                fontSize: "16px",
+                fontFamily: "'Syne', sans-serif",
+                fontSize: "1rem",
                 fontWeight: 700,
-                color: "#1E293B",
+                color: "var(--ink)",
+                marginBottom: "1.25rem",
               }}
             >
               Applications per week
             </h2>
             {weekly.length === 0 ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "60px",
-                  color: "#CBD5E1",
-                }}
-              >
-                Not enough data yet
+              <div className="empty-state">
+                <div className="empty-state-icon">📈</div>
+                <div className="empty-state-title">Not enough data yet</div>
+                <div className="empty-state-desc">
+                  Add more applications to see weekly trends
+                </div>
               </div>
             ) : (
               <Bar data={barData} options={barOptions} />
@@ -279,23 +289,15 @@ const Analytics = () => {
           </div>
         </div>
 
-        {/* Status Detail Table */}
-        <div
-          style={{
-            background: "white",
-            borderRadius: "14px",
-            padding: "24px",
-            marginTop: "20px",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.07)",
-            border: "1px solid #F1F5F9",
-          }}
-        >
+        {/* Status Summary */}
+        <div className="card">
           <h2
             style={{
-              margin: "0 0 16px",
-              fontSize: "16px",
+              fontFamily: "'Syne', sans-serif",
+              fontSize: "1rem",
               fontWeight: 700,
-              color: "#1E293B",
+              color: "var(--ink)",
+              marginBottom: "1.25rem",
             }}
           >
             Status summary
@@ -303,60 +305,48 @@ const Analytics = () => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: "12px",
+              gridTemplateColumns: "repeat(5, 1fr)",
+              gap: "0.75rem",
             }}
           >
-            {[
-              {
-                key: "APPLIED",
-                label: "Applied",
-                color: "#6366F1",
-                bg: "#EEF2FF",
-              },
-              {
-                key: "INTERVIEW",
-                label: "Interview",
-                color: "#F97316",
-                bg: "#FFF7ED",
-              },
-              { key: "OFFER", label: "Offer", color: "#22C55E", bg: "#F0FDF4" },
-              {
-                key: "REJECTED",
-                label: "Rejected",
-                color: "#F43F5E",
-                bg: "#FFF1F2",
-              },
-            ].map((s) => (
+            {STATUS_COLORS.map((s) => (
               <div
                 key={s.key}
                 style={{
                   background: s.bg,
                   borderRadius: "10px",
-                  padding: "16px",
+                  padding: "1.25rem",
                   textAlign: "center",
                 }}
               >
                 <div
-                  style={{ fontSize: "28px", fontWeight: 800, color: s.color }}
+                  style={{
+                    fontSize: "1.8rem",
+                    fontWeight: 800,
+                    color: s.color,
+                    fontFamily: "'Syne', sans-serif",
+                    lineHeight: 1,
+                  }}
                 >
                   {breakdown[s.key] || 0}
                 </div>
                 <div
                   style={{
-                    fontSize: "12px",
-                    fontWeight: 600,
+                    fontSize: "0.72rem",
+                    fontWeight: 700,
                     color: s.color,
-                    marginTop: "4px",
+                    marginTop: "0.3rem",
+                    textTransform: "uppercase",
+                    letterSpacing: ".05em",
                   }}
                 >
                   {s.label}
                 </div>
                 <div
                   style={{
-                    fontSize: "11px",
-                    color: "#94A3B8",
-                    marginTop: "2px",
+                    fontSize: "0.7rem",
+                    color: "var(--muted)",
+                    marginTop: "0.2rem",
                   }}
                 >
                   {data.totalApplications > 0
@@ -367,7 +357,7 @@ const Analytics = () => {
             ))}
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
