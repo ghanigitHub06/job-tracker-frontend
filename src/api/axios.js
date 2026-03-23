@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: "https://job-tracker-backend-production-b07b.up.railway.app/api",
 });
 
 API.interceptors.request.use((config) => {
@@ -12,20 +12,10 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
+// NO response interceptor - removed completely
 API.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // Don't auto-logout on every error
-    // Only logout on 401 from specific endpoints
-    if (error.response?.status === 401) {
-      const url = error.config?.url || "";
-      if (!url.includes("/auth/")) {
-        localStorage.clear();
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
 export default API;
