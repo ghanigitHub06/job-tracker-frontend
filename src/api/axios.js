@@ -15,9 +15,14 @@ API.interceptors.request.use((config) => {
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 403 || error.response?.status === 401) {
-      localStorage.clear();
-      window.location.href = "/login";
+    // Don't auto-logout on every error
+    // Only logout on 401 from specific endpoints
+    if (error.response?.status === 401) {
+      const url = error.config?.url || "";
+      if (!url.includes("/auth/")) {
+        localStorage.clear();
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   },
