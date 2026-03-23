@@ -1,13 +1,9 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
-
-  // Check localStorage directly as fallback
   const token = localStorage.getItem("token");
 
-  if (!user && !token) {
+  if (!token) {
     return <Navigate to="/login" replace />;
   }
 
