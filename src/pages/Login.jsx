@@ -16,7 +16,11 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await login(form.email, form.password);
+      const res = await API.post("/auth/login", {
+        email: form.email,
+        password: form.password,
+      });
+      login(res.data); // ← this is the key fix
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password.");
