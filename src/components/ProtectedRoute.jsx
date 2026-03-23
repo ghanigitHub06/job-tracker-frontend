@@ -3,7 +3,15 @@ import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
-  return user ? children : <Navigate to="/login" replace />;
+
+  // Check localStorage directly as fallback
+  const token = localStorage.getItem("token");
+
+  if (!user && !token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;
